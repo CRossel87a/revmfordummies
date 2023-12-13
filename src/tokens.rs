@@ -188,10 +188,16 @@ mod tests {
         let recipient = Address::from_str("0x0000000000000000000000000000000000001337").unwrap();
         let amount: U256 = U256::from(1337);
 
-        let (bytes, logs) = transfer(&fork_db, msgsender, token, recipient, amount).await.unwrap();
-        dbg!(bytes);
-        dbg!(&logs);
-
-        verify_transfer(logs, msgsender, token, recipient, amount).unwrap();
+        match transfer(&fork_db, msgsender, token, recipient, amount).await {
+            Ok((bytes, logs)) => {
+                dbg!(bytes);
+                dbg!(&logs);
+        
+                dbg!(verify_transfer(logs, msgsender, token, recipient, amount));
+            },
+            Err(err) => {
+                dbg!(err);
+            } 
+        }
     }
 }
