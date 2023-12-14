@@ -150,7 +150,7 @@ mod tests {
         let cache_db = CacheDB::new(EmptyDB::default());
     
         // setup backend
-        let fork_factory = ForkFactory::new_sandbox_factory(client, cache_db, latest_block_id);
+        let fork_factory = ForkFactory::new_sandbox_factory(client, cache_db, latest_block_id).await;
         let fork_db = fork_factory.new_sandbox_fork();
     
 
@@ -178,7 +178,7 @@ mod tests {
         let cache_db = CacheDB::new(EmptyDB::default());
     
         // setup backend
-        let fork_factory = ForkFactory::new_sandbox_factory(client, cache_db, latest_block_id);
+        let fork_factory = ForkFactory::new_sandbox_factory(client, cache_db, latest_block_id).await;
         let fork_db = fork_factory.new_sandbox_fork();
 
         let msgsender = Address::from_str("0x3C1fd12D3E86b6A4E9EcF69b6F293f30a3A5fe7e").unwrap();

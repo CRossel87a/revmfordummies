@@ -60,7 +60,7 @@ impl ForkFactory {
     }
 
     // Create a new sandbox environment with backend running on own thread
-    pub fn new_sandbox_factory(
+    pub async fn new_sandbox_factory(
         provider: Arc<Provider<Ws>>,
         initial_db: CacheDB<EmptyDB>,
         fork_block: Option<BlockId>,
@@ -69,6 +69,9 @@ impl ForkFactory {
 
         // spawn a light-weight thread with a thread-local async runtime just for
         // sending and receiving data from the remote client
+
+        tokio::spawn(handler);
+        /*
         let _ = std::thread::Builder::new()
             .name("fork-backend-thread".to_string())
             .spawn(move || {
@@ -80,6 +83,8 @@ impl ForkFactory {
                 rt.block_on(async move { handler.await });
             })
             .expect("failed to spawn backendhandler thread");
+
+         */
 
         shared
     }
