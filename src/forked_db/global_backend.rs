@@ -2,7 +2,7 @@
 // https://github.com/foundry-rs/foundry/blob/master/evm/src/executor/fork/backend.rs
 use ethers::{
     providers::{ Middleware, Provider, ProviderError, Ws },
-    types::{ Address, BigEndianHash, BlockId, H256, U256, H160 },
+    types::{ Address, BigEndianHash, BlockId, H256 },
     utils::keccak256,
 };
 use eyre::Result;
@@ -11,7 +11,6 @@ use hashbrown::{ hash_map::Entry, HashMap };
 use revm::{
     db::{ CacheDB, EmptyDB },
     primitives::{
-        bytes,
         AccountInfo,
         Bytecode,
         Bytes as rBytes,
@@ -190,7 +189,7 @@ impl GlobalBackend {
                     let storage = storage.map(|storage| storage.into_uint());
 
                     // convert ethers types to revm types
-                    let storage = storage.map(|s| to_revm_u256(s));
+                    let storage = storage.map(to_revm_u256);
                     // convert back to revm types
                     (storage, address, idx)
                 });

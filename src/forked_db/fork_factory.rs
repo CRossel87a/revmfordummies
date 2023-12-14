@@ -71,20 +71,6 @@ impl ForkFactory {
         // sending and receiving data from the remote client
 
         tokio::spawn(handler);
-        /*
-        let _ = std::thread::Builder::new()
-            .name("fork-backend-thread".to_string())
-            .spawn(move || {
-                let rt = tokio::runtime::Builder::new_current_thread()
-                    .enable_all()
-                    .build()
-                    .expect("failed to create fork-backend-thread tokio runtime");
-
-                rt.block_on(async move { handler.await });
-            })
-            .expect("failed to spawn backendhandler thread");
-
-         */
 
         shared
     }
@@ -109,8 +95,8 @@ impl ForkFactory {
             };
 
             // keep record of fetched acc basic info
-            if info.is_some() {
-                self.initial_db.insert_account_info(address, info.unwrap());
+            if let Some(account_info) = info {
+                self.initial_db.insert_account_info(address, account_info);
             }
         }
         self.initial_db
