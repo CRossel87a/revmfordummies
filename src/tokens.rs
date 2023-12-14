@@ -1,5 +1,5 @@
 use ethers::prelude::*;
-use ethers::abi::{parse_abi, ParamType};
+use ethers::abi::parse_abi;
 use crate::forked_db::fork_db::ForkDB;
 use crate::forked_db::{to_revm_address, to_revm_u256};
 use revm::primitives::{TransactTo, ExecutionResult, Output, Bytes as aBytes, Log as rLog, B256};
