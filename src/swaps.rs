@@ -110,7 +110,7 @@ mod tests {
     
         //let latest_block = client.get_block_number().await.unwrap();
 
-        let tx_hash: H256 = H256::from_str("0x1697b07c34cd6e7e8dbaca11d020305c24c9da72e4af41d5df52025a16619dcc").unwrap();
+        let tx_hash: H256 = H256::from_str("0x6781bd40909235f50083cabf3c38692d24c5b34fd0a52a5815cb381078136dc7").unwrap();
         let tx = client.get_transaction(tx_hash).await.unwrap().unwrap();
 
         let prev_block = tx.block_number.unwrap() - 1;
