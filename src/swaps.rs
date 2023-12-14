@@ -103,7 +103,8 @@ mod tests {
     #[tokio::test(flavor = "multi_thread")]
     pub async fn test_swaps() {
 
-        let url: &str = "wss://rpc.pulsechain.com";
+        //let url: &str = "wss://rpc.pulsechain.com";
+        let url: &str = "ws://127.0.0.1:8546";
         let provider = Provider::<Ws>::connect(url).await.unwrap();
         let client = Arc::new(provider);
     
