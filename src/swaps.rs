@@ -7,6 +7,38 @@ use revm::EVM;
 use anyhow::{bail, ensure};
 use std::str::FromStr;
 use anyhow::anyhow;
+use ethers::abi::ParamType;
+use ethers::abi::ethabi;
+use fxhash::FxHashMap;
+
+#[derive(Debug)]
+pub struct Uniswap2Reserves {
+    pub r0: u128,
+    pub r1: u128
+}
+
+pub fn filter_swaps(logs: Vec<rLog>) -> anyhow::Result<FxHashMap<Address, Uniswap2Reserves>> {
+    let uniswap2_sync_event = B256::from_str("0x1c411e9a96e071241c2f21f7726b17ae89e3cab4c78be50e062b03a9fffbbad1").unwrap();
+
+    let mut reserve_map = FxHashMap::<Address, Uniswap2Reserves>::default();
+
+    logs.iter().filter(|e| e.topics.first() == Some(&uniswap2_sync_event)).for_each(|s| {
+        if let Ok(reserves) = ethabi::decode(&[ParamType::Uint(112),ParamType::Uint(112)],&s.data) {
+
+            if let Some(r0) = reserves[0].clone().into_uint() {
+                if let Some(r1) = reserves[1].clone().into_uint() {
+                    let max_u128 = U256::from(u128::MAX);
+
+                    if r0 <= max_u128 && r1 <= max_u128 {
+                        reserve_map.insert(Address::from_slice(&s.address.0.0), Uniswap2Reserves { r0: r0.as_u128(), r1: r1.as_u128()});
+                    }
+                }
+            }
+        }
+    });
+
+    Ok(reserve_map)
+}
 
 pub async fn check_transaction(fork_db: &ForkDB, tx: Transaction, block: Block<H256>) -> anyhow::Result<()> {
 
@@ -41,8 +73,10 @@ pub async fn check_transaction(fork_db: &ForkDB, tx: Transaction, block: Block<H
         },
         ExecutionResult::Success { reason, gas_used, gas_refunded, logs, output } => {
             println!("Success: {:?} gas_used: {} gas_refunded: {}", reason,gas_used, gas_refunded);
-            dbg!(logs);
+            dbg!(&logs);
             dbg!(output);
+
+            dbg!(filter_swaps(logs));
         },
         ExecutionResult::Halt { reason, gas_used } => {
             println!("Halt: {:?} gas_used {}",reason,gas_used);
